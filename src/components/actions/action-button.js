@@ -112,6 +112,7 @@ export class ActionButton extends React.Component {
 				 backward compatibility we are passing it explicitly
 				**/
 				this.onExecuteAction(actionPayload, actionPayload.ignoreInputValidation);
+				console.log(actionPayload.data);
 				break;
 			case Constants.ActionShowCard:
 				this.changeShowCardState();

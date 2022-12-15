@@ -9,6 +9,7 @@ import {
 	Linking,
 	View
 } from 'react-native';
+import {FlexEnd, FlexStart, CenterString} from '../utils/constants';
 import PropTypes from 'prop-types';
 
 let SPECIAL_CHAR_REGEX = new RegExp("[^a-z\\\\s\\d]", 'gi');
@@ -92,6 +93,18 @@ export default class MarkdownFormatter extends React.PureComponent {
 		this.init();
 	}
 
+	getAlignment = () => {
+		let alignment = {}
+		if(this.props.textAlign == 'right') {
+			alignment.alignSelf = FlexEnd
+		} else if (this.props.textAlign == 'center') {
+			alignment.alignSelf = CenterString
+		} else {
+			alignment.alignSelf = FlexStart
+		}
+		return alignment
+	}
+
 	render() {
 		this.numberOfLines = this.props.numberOfLines;
 		this.userStyles = this.props.defaultStyles;
@@ -110,11 +123,13 @@ export default class MarkdownFormatter extends React.PureComponent {
 		}
 
 		return (
-			this.altText ?
-				<View accessible={true} accessibilityLabel={this.altText}>
-					{this.renderText(this.text)}
-				</View> :
-				this.renderText(this.text)
+			<Text accessible={true}
+				numberOfLines={this.numberOfLines}
+				accessibilityLabel={this.altText || this.text}
+				onLayout={this.props.onDidLayout}
+				style={[styles.accessibilityContainer, this.getAlignment()]}>
+				{this.renderText(this.text)}
+			</Text>
 		);
 	}
 
@@ -248,7 +263,7 @@ export default class MarkdownFormatter extends React.PureComponent {
 
 		if (this.matchesFound.length < 1) {
 			jsxArray.push(
-				<Text key={'text'} style={this.userStyles} numberOfLines={this.numberOfLines}>
+				<Text key={'text'} style={this.userStyles}>
 					{remainingText}{!!this.isRequired && this.getRedAsterisk()}
 				</Text>
 			);
@@ -273,6 +288,7 @@ export default class MarkdownFormatter extends React.PureComponent {
 							let modifiedElement = lastElement.replace(matchedStr, "");
 							let dividedElements = this.splitValue(lastElement, lastElement.indexOf(matchedStr), matchedStr);
 							let lastElementStyles = elementStylesArray.pop();
+							let lastElementLink = elementLinksArray?.pop();
 							if (modifiedElement !== "" && !isMatch) {
 								elementJsxArray.push(dividedElements[0]);
 								elementStylesArray.push(lastElementStyles);
@@ -286,6 +302,11 @@ export default class MarkdownFormatter extends React.PureComponent {
 							let elementStyle = [this.matchesStyleTypes[idx]];
 							elementStyle = elementStyle.concat(this.matchesStyles[idx]);
 							elementStylesArray.push(elementStyle.concat(lastElementStyles));
+							if (this.matchesStyleTypes[idx] === 'hyperlinkText') {
+								elementLinksArray.push(this.matchesFound[idx][2]);
+							} else {
+								elementLinksArray.push(null);
+							}
 
 							if (dividedElements.length > 1) {
 								elementJsxArray.push(dividedElements[1]);
@@ -360,7 +381,7 @@ export default class MarkdownFormatter extends React.PureComponent {
 			let key = 'text_' + index;
 
 			if (elementStylesArray[index].indexOf('bulletText') !== -1 || elementStylesArray[index].indexOf('numberedText') !== -1) {
-				tempJSX.push(<Text key={'list_item_' + index} style={[this.userStyles.concat(elementStylesArray[index])]}>{eachWord}</Text>)
+				tempJSX.push(<Text key={'list_item_' + index} style={[this.userStyles.concat(elementStylesArray[index])]}  onPress={() => this.addOnPress(elementLinksArray[index])}>{eachWord}</Text>)
 			} else {
 				tempJSX.push(<Text key={key} style={[elementStylesArray[index]]} onPress={() => this.addOnPress(elementLinksArray[index])}>{eachWord}</Text>)
 			}
@@ -459,6 +480,11 @@ MarkdownFormatter.propTypes = {
 };
 
 const styles = StyleSheet.create({
+	accessibilityContainer: {
+		alignSelf: 'baseline',
+		flexWrap: 'wrap',
+		flexDirection: 'row'
+	},
 	hyperlinkText: {
 		color: 'blue',
 		textDecorationLine: 'underline',
