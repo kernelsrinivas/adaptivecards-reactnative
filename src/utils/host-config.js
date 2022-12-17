@@ -793,7 +793,7 @@ export const defaultHostConfig = {
 	},
 	fontStyles: {
 		default: {
-			fontFamily: "Helvetica",
+			fontFamily: "Poppins",
 			fontSizes: {
 				small: 12,
 				default: 14,
