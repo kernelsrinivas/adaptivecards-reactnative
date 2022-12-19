@@ -52,7 +52,7 @@
   "dependencies": {
     "@react-native-community/datetimepicker": "6.0.2",
     "@react-native-picker/picker": "2.4.1",
-    "adaptivecards-templating": "1.0.0",
+    "adaptivecards-templating": "2.3.1",
     "antlr4ts": "^0.5.0-alpha.3",
     "assert": "^2.0.0",
     "react-native-keyboard-aware-scroll-view": "0.9.5"
