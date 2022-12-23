@@ -5,10 +5,11 @@
 import React from 'react';
 import {
 	Text,
-	ScrollView
+	ScrollView,
+	KeyboardAvoidingView
 } from 'react-native';
 
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+// import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'; */
 import { Registry } from './components/registration/registry';
 import { InputContextProvider } from './utils/context';
 import { HostConfig, defaultHostConfig } from './utils/host-config';
@@ -250,11 +251,11 @@ export default class AdaptiveCard extends React.Component {
 
         if (!this.props.isActionShowCard) {
 			adaptiveCardContent = (
-                <KeyboardAwareScrollView
-                    enableOnAndroid={true}
-                    extraHeight={120}>
+                /* <KeyboardAwareScrollView enableOnAndroid={true} extraHeight={120}> */
+					<KeyboardAvoidingView>
                     {adaptiveCardContent}
-                </KeyboardAwareScrollView>
+					</KeyboardAvoidingView>
+                /* </KeyboardAwareScrollView> */
             );
 		}
 
