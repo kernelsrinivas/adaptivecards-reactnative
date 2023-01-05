@@ -196,6 +196,9 @@ export function getImageUrl(image) {
 	if (isNullOrEmpty(image)) {
 		return image
 	}
+	if (this.isaNumber(image)){
+		return image;
+	}
 	image = this.isString(image) ? image : image.url
 	return validateUrl(image) ? image : image.split('/').pop().split('.')[0];
 }
